@@ -2,7 +2,6 @@ __winc_id__ = "d7b474e9b3a54d23bca54879a4f1855b"
 __human_name__ = "Betsy Webshop"
 
 #from itertools import product
-
 from site import main
 from models import *
 from decimal import Decimal
@@ -13,14 +12,13 @@ from models import Model
 db.connect()
 db.create_tables([User, Product, Tag, Transaction, ProductTag, UserProduct])
 
-
 def search(term):
     # Search for products based on a term
-    query = Product.select().where(Product.productname.contains(term)) | (Product.description.contains(term))#.order_by(Product.productname).dicts()
+    query = Product.select().where(Product.productname.contains(term)) | (Product.description.contains(term))
     search_result = list(query.execute())
     if len(search_result) > 0:
         return search_result
-    return []
+    return 'search'
 
 def list_user_products(user_id):
     query = Product.select().join(UserProduct, on=(Product.productname == UserProduct.product)).join(
@@ -28,16 +26,16 @@ def list_user_products(user_id):
     search_result = list(query.execute())
     if len(search_result) > 0:
         return search_result
-    return []
+    return 'list_user_products'
 
 def list_products_per_tag(tag_id):
     query = Product.select().join(ProductTag, on=(Product.productname == ProductTag.product_id)).join(
-        Tag, on=(Tag.user == ProductTag.tag_id)
-    ).where(Tag.user == tag_id).dicts()
+        Tag, on=(Tag.name == ProductTag.tag_owner)
+    ).where(Tag.name == tag_id).dicts()
     search_result = list(query.execute())
     if len(search_result) > 0:
         return search_result
-    return []
+    return 'list_products_per_tag'
 
 def add_product_to_catalog(user_id, product):
     
@@ -50,8 +48,8 @@ def update_stock(product_id, new_quantity):
     query = Product.update({Product.quantity: new_quantity}).where(Product.productname == product_id)
     search_result = query.execute()
     if search_result:
-        return 'Success: 200'
-    return 'Not Found'
+        return 'Success'
+    return 'update_stock'
 
 def purchase_product(product_id, buyer_id, quantity):
     query_product = User.select(User.username).join(UserProduct, on=(User.username == UserProduct.user)).join(
@@ -79,7 +77,6 @@ def remove_product(product_id):
     if search_result:
         return True
     return False
-print(update_stock('Keyboard', 999))
 
 if __name__ == '__main__':
     main()

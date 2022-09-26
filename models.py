@@ -11,12 +11,11 @@ db = peewee.SqliteDatabase('besty_shop.db')
 # So we put on Class
 class User(Model):
     username = CharField(unique=True, primary_key=True)
-    password = CharField()
+    fullname = TextField()
     address = CharField()
     country = CharField()
     city = TextField()
     postalcode = CharField()
-    phone = IntegerField()
     billing = CharField()
     
     class Meta:
@@ -34,14 +33,14 @@ class Product(Model):
     
 # The Tags
 class Tag(Model):
-    user = CharField(unique=True, null=False, primary_key=True) # TextField
+    name = CharField(unique=True, null=False, primary_key=True) # TextField
 
     class Meta:
         database = db
 # The Transactions model
 # The transaction model must link a buyer with a purchased product and a quantity of purchased items
 class Transaction(Model):
-    id = BigAutoField(primary_key=True)
+    id = AutoField(primary_key=True)
     buyer_id = ForeignKeyField(User, backref='get_user')
     seller_id = ForeignKeyField(User, backref='get_user')
     product_id = ForeignKeyField(Product, backref='get_product')
@@ -52,9 +51,8 @@ class Transaction(Model):
         database = db
     
 class ProductTag(Model):
-    id = BigAutoField()
     product_id = ForeignKeyField(Product, backref='get_tags')
-    tag_id = ForeignKeyField(Tag, backref='get_tags')
+    tag_owner = ForeignKeyField(Tag, backref='get_tags')
     
     class Meta:
         database = db
