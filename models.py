@@ -4,18 +4,14 @@ import peewee
 
 # A key part of the Betsy webshop is the database
 # So we make a database = db
-db = peewee.SqliteDatabase('besty_shop.db')
+db = peewee.SqliteDatabase('database.db')
 
 
 # A user has a name, address data, and billing information
 # So we put on Class
 class User(Model):
-    username = CharField(unique=True, primary_key=True)
-    fullname = TextField()
+    name = CharField()
     address = CharField()
-    country = CharField()
-    city = TextField()
-    postalcode = CharField()
     billing = CharField()
     
     class Meta:
@@ -27,6 +23,7 @@ class Product(Model):
     description = CharField()
     productprice = DecimalField(decimal_places=2, auto_round=True)
     quantity = IntegerField()
+    owner = ForeignKeyField(User, backref='product')
     
     class Meta:
         database = db
@@ -37,15 +34,14 @@ class Tag(Model):
 
     class Meta:
         database = db
+        
 # The Transactions model
 # The transaction model must link a buyer with a purchased product and a quantity of purchased items
 class Transaction(Model):
-    id = AutoField(primary_key=True)
-    buyer_id = ForeignKeyField(User, backref='get_user')
-    seller_id = ForeignKeyField(User, backref='get_user')
+    #id = AutoField(primary_key=True)
+    buyer = ForeignKeyField(User, backref='get_user')
     product_id = ForeignKeyField(Product, backref='get_product')
-    quantity_items = IntegerField()
-    totalprice = DecimalField(decimal_places=2, auto_round=True)
+    quantity = IntegerField()
     
     class Meta:
         database = db
@@ -53,13 +49,6 @@ class Transaction(Model):
 class ProductTag(Model):
     product_id = ForeignKeyField(Product, backref='get_tags')
     tag_owner = ForeignKeyField(Tag, backref='get_tags')
-    
-    class Meta:
-        database = db
-        
-class UserProduct(Model):
-    user = ForeignKeyField(User, backref='get_products')
-    product = ForeignKeyField(Product, backref='get_products')
     
     class Meta:
         database = db

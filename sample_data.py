@@ -2,42 +2,40 @@ from models import *
 from peewee import *
 
 
-user_data = (
-    (
-        'ftamimi', 'Farid Attamimi', 'Centrum', 'Nederland', 'Amsterdam', '1011dd', '0123456789'
+def sample_data():
+    attamimi = User.create(
+        name='attamimi',
+        address='centrum',
+        billing='0123456789'
     )
-)
-for u in user_data:
-    User.create(username=u[0], fullname=u[1], address=u[2], country=u[3], city=u[4], postalcode=u[5], billing=u[6])
+    farid = User.create(
+        name='farid',
+        address='Utrecht',
+        billing='9876543210'
+    )
     
-product_data = (
-    (
-        'Rolex', 'Rolex Datejust 41', '98.99', '1'
+    rolex = Product.create(
+        productname='rolex',
+        description='Rolex Datejust 41',
+        productprice=98.99,
+        quantity=1,
+        owner=attamimi
     )
-)
-for p in product_data:
-    Product.create(productname=p[0], description=p[1], productprice=p[2], quantity=p[3])
+    book = Product.create(
+        productname='book',
+        description='Novel book',
+        productprice=40,
+        quantity=4,
+        owner=farid
+    )
     
-tag_data = (
-    (
-        'Rolex'
-    )
-)
-for t in tag_data:
-    Tag.create(name=t)
+    watchmaking = Tag.create(name='watchmaking')
     
-productTag_data = (
-    (
-        'Rolex', 'Rolex'
-    )
-)
-for pt in productTag_data:
-    ProductTag.create(product_id=pt[0], tag_owner=pt[1])
-    
-userProduct_data = (
-    (
-        'Farid Attamimi', 'Rolex'
-    )
-)
-for up in userProduct_data:
-    UserProduct.create(user=up[0], product=up[1])
+    ProductTag.create(product_id=rolex, tag_owner=watchmaking)
+
+    publishing = Tag.create(name='publishing')
+
+    ProductTag.create(product_id=book, tag_owner=publishing)
+
+db.create_tables([User, Product, Tag, Transaction, ProductTag])
+sample_data()
