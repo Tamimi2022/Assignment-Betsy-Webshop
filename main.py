@@ -30,7 +30,7 @@ def list_user_products(user_id):
         if len(products) > 0:
             print(f'{user.name}')
             for p in products:
-                print(
+                return(
                     f'Product: {p.productname}, price per unit: {p.productprice}, availabilty: {p.quantity}'
                 )
         else:
